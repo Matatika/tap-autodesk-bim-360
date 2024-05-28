@@ -45,12 +45,12 @@ ENDPOINTS_CONFIG = {
                 'ignore_http_status_codes': [403]
             },
             'issues': {
-                'url': 'https://developer.api.autodesk.com/issues/v1/containers/{container_id}/quality-issues',
+                'url': 'https://developer.api.autodesk.com/issues/v2/containers/{container_id}/issues',
                 'auth': 'user',
                 'pk': ['id'],
-                'data_key': 'data',
-                'paginate_limit_param': 'page[limit]',
-                'paginate_offset_param': 'page[offset]',
+                'data_key': 'results',
+                'paginate_limit_param': 'limit',
+                'paginate_offset_param': 'offset',
                 'ignore_http_status_codes': [401, 403]
             },
             'folder_contents': {
