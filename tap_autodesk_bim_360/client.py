@@ -20,13 +20,9 @@ class BIM360Client(object):
         self.__account_id = config.get('account_id')
         self.__client_id = config.get('client_id')
         self.__client_secret = config.get('client_secret')
-        self.__refresh_token = config.get('refresh_token')
-        self.__config_path = config_path
 
-        self.__user_access_token = None
-        self.__user_expires_at = None
-        self.__app_access_token = None
-        self.__app_expires_at = None
+        self.__access_token = None
+        self.__expires_at = None
 
     def __enter__(self):
         return self
@@ -34,31 +30,7 @@ class BIM360Client(object):
     def __exit__(self, type, value, traceback):
         self.__session.close()
 
-    def refresh_user_access_token(self):
-        data = self.request(
-            'POST',
-            url='https://developer.api.autodesk.com/authentication/v1/refreshtoken',
-            data={
-                'client_id': self.__client_id,
-                'client_secret': self.__client_secret,
-                'refresh_token': self.__refresh_token,
-                'grant_type': 'refresh_token'
-            })
-
-        self.__user_access_token = data['access_token']
-        self.__refresh_token = data['refresh_token']
-
-        self.__user_expires_at = datetime.utcnow() + \
-            timedelta(seconds=data['expires_in'] - 10) # pad by 10 seconds for clock drift
-
-        ## Update refresh token in config file
-        with open(self.__config_path) as file:
-            config = json.load(file)
-        config['refresh_token'] = self.__refresh_token
-        with open(self.__config_path, 'w') as file:
-            json.dump(config, file, indent=2)
-
-    def refresh_app_access_token(self):
+    def get_access_token(self):
         data = self.request(
             'POST',
             url='https://developer.api.autodesk.com/authentication/v1/authenticate',
@@ -69,9 +41,9 @@ class BIM360Client(object):
                 'scope': 'data:read account:read'
             })
 
-        self.__app_access_token = data['access_token']
+        self.__access_token = data['access_token']
 
-        self.__app_expires_at = datetime.utcnow() + \
+        self.__expires_at = datetime.utcnow() + \
             timedelta(seconds=data['expires_in'] - 10) # pad by 10 seconds for clock drift
 
     @backoff.on_exception(backoff.expo,
@@ -93,23 +65,10 @@ class BIM360Client(object):
             kwargs['headers'] = {}
 
         if auth:
-            if auth == 'user' and \
-                (self.__user_access_token is None or \
-                 self.__user_expires_at <= datetime.utcnow()):
-                    self.refresh_user_access_token()
-            elif auth == 'app' and \
-                (self.__app_access_token is None or \
-                 self.__app_expires_at <= datetime.utcnow()):
-                    self.refresh_app_access_token()
+            if self.__access_token is None or self.__expires_at <= datetime.utcnow():
+                self.get_access_token()
 
-            if auth == 'user':
-                access_token = self.__user_access_token
-            elif auth == 'app':
-                access_token = self.__app_access_token
-            else:
-                raise Exception('Auth mode "{}" not supported'.format(auth))
-
-            kwargs['headers']['Authorization'] = 'Bearer {}'.format(access_token)
+            kwargs['headers']['Authorization'] = 'Bearer {}'.format(self.__access_token)
 
         if 'endpoint' in kwargs:
             endpoint = kwargs['endpoint']

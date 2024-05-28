@@ -2,7 +2,6 @@
 ENDPOINTS_CONFIG = {
     'business_units': {
         'url': 'https://developer.api.autodesk.com/hq/v1/accounts/{account_id}/business_units_structure',
-        'auth': 'app',
         'paginate': False,
         'data_key': 'business_units',
         'replication_method': 'incremental',
@@ -11,7 +10,6 @@ ENDPOINTS_CONFIG = {
     },
     'projects': {
         'url': 'https://developer.api.autodesk.com/hq/v1/accounts/{account_id}/projects',
-        'auth': 'app',
         'params': {
             'sort': '-updated_at'
         },
@@ -24,7 +22,6 @@ ENDPOINTS_CONFIG = {
     'hub_projects': {
         'persist': False,
         'url': 'https://developer.api.autodesk.com/project/v1/hubs/b.{account_id}/projects',
-        'auth': 'app',
         'data_key': 'data',
         'paginate_limit_param': 'page[limit]',
         'paginate_offset_param': 'page[number]',
@@ -37,7 +34,6 @@ ENDPOINTS_CONFIG = {
         'children': {
             'checklists': {
                 'url': 'https://developer.api.autodesk.com/bim360/checklists/v1/containers/{container_id}/instances',
-                'auth': 'user',
                 'pk': ['id'],
                 'data_key': 'data',
                 'paginate_limit_param': 'page[limit]',
@@ -46,7 +42,6 @@ ENDPOINTS_CONFIG = {
             },
             'issues': {
                 'url': 'https://developer.api.autodesk.com/issues/v1/containers/{container_id}/quality-issues',
-                'auth': 'user',
                 'pk': ['id'],
                 'data_key': 'data',
                 'paginate_limit_param': 'page[limit]',
@@ -55,7 +50,6 @@ ENDPOINTS_CONFIG = {
             },
             'folder_contents': {
                 'url': 'https://developer.api.autodesk.com/data/v1/projects/{project_id}/folders/{root_folder_id}/contents',
-                'auth': 'user',
                 'pk': ['id'],
                 'data_key': 'data',
                 'paginate_limit_param': 'page[limit]',

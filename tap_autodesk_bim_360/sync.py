@@ -69,7 +69,7 @@ def sync_endpoint(client,
         data = client.request('GET',
                               url=url,
                               params=params,
-                              auth=endpoint.get('auth'),
+                              auth=True,
                               endpoint=stream_name,
                               ignore_http_status_codes=endpoint.get('ignore_http_status_codes', []))
 

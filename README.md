@@ -18,12 +18,6 @@ This tap:
 
 The tap needs to be [associated with an app](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/create-app/).
 
-The tap uses two forms of authentication:
-- OAuth `client_credentials` for endpoints that use the "app" authentication context.
-- OAuth `refresh_token` for endpoints that use the "user" authentication context.
-
-A separate access token is generated and tracked for each form of OAuth during each run.
-
 For the "app" authentication endpoints to work, the app whose credentials are added to the config file must be added to the BIM 360 account.
 
 For the "user" authentication endpoints to work, the user must have access to those resource. Resrouces are also on a per project basis. Checklists, issues, and folder_contents will be replicated if access is allowed (a 403 is not received).
@@ -35,8 +29,7 @@ For the "user" authentication endpoints to work, the user must have access to th
   "start_date": "2000-01-01T00:00:00Z",
   "account_id": <ACCOUNT_ID>,
   "client_id": <CLIENT_ID>,
-  "client_secret": <CLIENT_SECRET>,
-  "refresh_token": <REFRESH_TOKEN>
+  "client_secret": <CLIENT_SECRET>
 }
 ```
 
